@@ -1,0 +1,12 @@
+IncludeTypePackage<Integer>
+IncludeTypePackage<MetaFunctions>
+IncludeTypePackage<Output>
+IncludeTypePackage<String>
+
+IncludeTypePackage<RawIntegerConstants>
+IncludeTypePackage<RawStringConstants>
+
+Output:DefineVariable<STDOUTfile; 0>
+String:DefineVariable<OutputString; "Hello, World!">
+
+Output:DisplayAsText<STDOUTfile; OutputString>

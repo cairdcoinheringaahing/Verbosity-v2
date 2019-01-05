@@ -1,0 +1,15 @@
+IncludeTypePackage<Integer>
+IncludeTypePackage<Output>
+IncludeTypePackage<RawIntegerConstants>
+IncludeStructurePackage<Loops>
+
+stdout = 0
+counter = 0
+test = Integer:Increment<counter>
+
+Loops:RepeatedIterationsLoop<5> [
+Output:DisplayAsText<stdout; counter>
+Integer:Increment<counter>
+]
+
+Output:DisplayAsText<stdout; counter>
