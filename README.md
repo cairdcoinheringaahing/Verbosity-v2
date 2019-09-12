@@ -32,3 +32,11 @@ However, the standard Hello, World program in version 2 is only 159 bytes:
     OutputSystem:DisplayAsText<output; "Hello, World!">
     
 which is significantly more readable than the previous program.
+
+## Invocation
+
+In order to run a Verbosity program, Python 3.7 is required, and the invocation
+
+    python verbosity2.py -f <file>
+    
+is used, assuming the program is in the file `<file>`.
