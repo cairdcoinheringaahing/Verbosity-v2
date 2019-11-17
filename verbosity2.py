@@ -291,7 +291,11 @@ if __name__ == '__main__':
 
     argparser.add_argument('program')
     argparser.add_argument('input', nargs = '*', type = evaluate)
-    settings = argparser.parse_args()
+    try:
+        settings = argparser.parse_args()
+    except:
+        print('Invalid Command Line Arguments', file = sys.stderr)
+        sys.exit(1)
 
     if settings.file:
         filename = settings.program
