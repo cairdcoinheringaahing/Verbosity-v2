@@ -699,6 +699,8 @@ Matrix.add_method('Power', MatrixBase.pow, 2, verify = (MatrixBase, int))
 Matrix.add_method('Negate', MatrixBase.neg, 1)
 Matrix.add_method('Dimensions', lambda m: m.dims, 1)
 Matrix.add_method('NumberOfElements', lambda m: m.rows * m.columns, 1)
+Matrix.add_method('Adjugate', MatrixBase.adjugate, 1)
+Matrix.add_method('Inverse', MatrixBase.inverse, 1)
 
 OutputSystem.add_method('DisplayAsText', OutputBase.print, 2, verify = False, convert = False)
 OutputSystem.add_method('ReturnDisplayedText', lambda s, a: OutputBase.print(s, a, ret = True), 2, verify = False, convert = False)
