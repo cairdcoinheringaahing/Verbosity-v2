@@ -113,18 +113,12 @@ class Base:
     def __init__(self, type_ = None, name = ''):
         self.base_type = type_
         self.type_name = name
-        self.attrs = {'Identity': (1, identity, False), 'Convert': (1, self.base_type, False)}
+        self.attrs = {'Identity': (1, identity, False)}
 
     def add_method(self, attr_name, attr_fn, attr_arity, verify = True, convert = True):
         self.attrs[attr_name] = (attr_arity, attr_fn, verify, convert)
 
     def call_method(self, method, *args):
-        if method == 'Convert':
-            try:
-                return self.base_type(*args)
-            except:
-                exceptions.RaiseException('TypeError: Unable to convert types')
-            
         if method in self.attrs.keys():
             arity, fun, verif, conv = self.attrs[method]
             
@@ -274,6 +268,7 @@ class MatrixBase:
             self.rows = len(arg)
             self.columns = len(arg[0]) if arg else 0
             self.dims = [self.rows, self.columns]
+            
         else:
             rows = arg
             columns = second
@@ -290,7 +285,10 @@ class MatrixBase:
                 temp.clear()
 
     def __repr__(self):
-        return str(self.value)
+        out = '('
+        for row in self.value:
+            out += ' '.join(list(map(str, row))).join('()')
+        return out + ')'
 
     def __eq__(self, other):
         if not isinstance(other, MatrixBase):
@@ -567,6 +565,29 @@ def new(type_name):
     }[type_name]
     return inner
 
+def convert(type_name):
+    def inner(value):
+
+        if type_name == 'Array':            func = list
+        if type_name == 'Binary':           func = BinaryBase
+        if type_name == 'Boolean':          func = bool
+        if type_name == 'Complex':          func = complex
+        if type_name == 'FloatingPoint':    func = float
+        if type_name == 'InputSystem':      func = InputBase
+        if type_name == 'Integer':          func = int
+        if type_name == 'Matrix':           func = MatrixBase
+        if type_name == 'OutputSystem':     func = OutputBase
+        if type_name == 'SetArray':         func = set
+        if type_name == 'StringArray':      func = str
+        if type_name == 'UniqueArray':      func = UniqueBase
+
+        if type(value) == func:
+            return value
+
+        return func(value)
+        
+    return inner
+
 Array           = Base(list, 'Array')
 Binary          = Base(BinaryBase, 'Binary')
 Boolean         = Base(bool, 'Boolean')
@@ -580,20 +601,21 @@ SetArray        = Base(set, 'SetArray')
 StringArray     = Base(str, 'StringArray')
 UniqueArray     = Base(UniqueBase, 'UniqueArray')
 
+'''
 ExtendedFunctionSet     = Base(FunctionBase)
 FunctionalBuiltinSet    = Base(FunctionBase)
 
 RawIntegerConstants         = Base(ConstantsBase)
 RawStringConstants          = Base(ConstantsBase)
 RawFloatingPointConstants   = Base(ConstantsBase)
+'''
 
 TYPES = [Array, Binary, Boolean, Complex, FloatingPoint, InputSystem, Integer,
-             Matrix, OutputSystem, SetArray, StringArray, UniqueArray,
-         ExtendedFunctionSet, FunctionalBuiltinSet,
-         RawIntegerConstants, RawStringConstants, RawFloatingPointConstants]
+             Matrix, OutputSystem, SetArray, StringArray, UniqueArray]
 
 ## Manual add
 
+Array.add_method('Convert', convert('Array'), 1, verify = False)
 Array.add_method('SortArrayByKeyFunction', lambda a, k: sorted(a, key = k), 2, verify = False)
 Array.add_method('MapFunctionOverArray', lambda a, f: list(map(f, a)), 2, verify = False)
 Array.add_method('ReduceArrayByDyad', lambda a, f: functools.reduce(f, a), 2, verify = False)
@@ -722,3 +744,6 @@ for name, fun, arity in data:
     FloatingPoint.add_method(name, fun, arity)
     if name not in ['Increment', 'Decrement']:
         Complex.add_method(name, fun, arity)
+
+for type_ in TYPES:
+    type_.add_method('Convert', convert(type_.type_name), 1, verify = False, convert = False)
