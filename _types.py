@@ -415,6 +415,8 @@ class MatrixBase:
         return MatrixBase(self.mul(other)).det() ** 0.5
 
     def minor(self, i, j):
+        if self.rows == self.columns == 1:
+            return self.value[0][0]
         copy = []
         for each in self.value.copy():
             copy.append(each.copy())
