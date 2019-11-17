@@ -79,7 +79,7 @@ class Iterable:
                 out = out.strip() + elem
             else:
                 out += elem + ' '
-        return out + ')'
+        return 'Iterable<' + out + ')>'
 
     def add_val(self, val):
         self.vals.append(val)
@@ -100,7 +100,7 @@ class Bool:
 def parser(string):
     tokens = []
     token = None
-    tkns = re.findall(r'[A-Za-z]+|\d+|.|\n', string + '\n')
+    tkns = re.findall(r'[A-Za-z0-9]+|\d+|.|\n', string + '\n')
     tkns = iter(tkns)
     
     func = False
