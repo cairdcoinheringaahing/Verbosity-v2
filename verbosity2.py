@@ -141,7 +141,7 @@ def iter_eval(array):
             blank.add_next(evaluate(elem))
         return blank
 
-def evaluate(string):
+def evaluate(string, parse_check = True):
     if isinstance(string, parser.Iterable):
         return iter_eval(string.vals)
 
@@ -151,6 +151,8 @@ def evaluate(string):
         return string.bool
 
     if isinstance(string, parser.Function):
+        if string.method is string.args is string.block is None and string.cls in variables.keys():
+            return variables[string.cls]
         return func_eval(string.cls, string.method, string.args, string.block)
 
     if string in variables.keys():
@@ -200,6 +202,15 @@ def evaluate(string):
     if string in ['DEFAULT', 'ERROR']:
         return string
 
+    parsed = parser.parser('PRIVATEVAR = ' + string)
+    if (
+        len(parsed) == 1 and
+        isinstance(parsed[0], parser.Assignment) and
+        parsed[0].var == 'PRIVATEVAR' and
+        parse_check
+    ):
+        return evaluate(parsed[0].val, parse_check = False)
+        
     exceptions.RaiseException('SyntaxError: \'{}\''.format(string))
 
 def main(code, parse = True):
@@ -260,4 +271,6 @@ if __name__ == '__main__':
         code = settings.program
 
     variables['ARGV'] = settings.input
+    for i, argv in enumerate(settings.input):
+        variables['ARGV{}'.format(i)] = argv
     main(code)
